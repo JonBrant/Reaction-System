@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Com.PI.NotificationSystem;
 
+
 //using Handler = System.Action<System.Object>;
 /*
 Passes data to multiple other delegates, able to invalidate it, stopping it from propagating the event
@@ -34,42 +35,39 @@ Notification system needs to fire an event when it's done running all callbacks 
 
 */
 
-#region ToDo
 /*
-// 
-//ToDo: Finish commenting.
+//ToDo: Finish commenting ReactionSystem_PROTOTYPE.
 //ToDo: Give Validator.Invalidate an optional string 'InvalidationReason' parameter,
     add it to a List<string> so that multiple invalidation reasons can be given.
     For example you're trying to cast a spell, and you're out of mana AND it's not your turn.
  */
-#endregion
-
 namespace Com.PI.ReactionSystem {
-   
-
+    //ToDo: Consider implementing PacketData as an Interface instead of using inheritance. Or maybe generics?
     public class PacketData {
+        public Action<PacketData> OnReact;
     }
 
-    public class ReactionPacket {
+    /*
+    ToDo: I think ReactionPacket needs to create a ReactionRoot
+    */
+    public class ReactionPacket : PacketData {
         public PacketData Data { get; }
         public Validator Validator { get; private set; }
 
-        public ReactionPacket(PacketData inputData) {
+        public ReactionPacket(PacketData inputData = null) {
             Validator = new Validator();
             Data = inputData;
         }
 
         public bool IsInvalidated() { return Validator.IsInvalidated(); }
     }
-    
+
     /*
     Root of the ReactionNode tree. Could and should probably just be a ReactionNode, 
     but I wanted to stuff extra functionality in a class for now, may refactor later.
-    //ToDo Maybe: Make reactionNodes an IEnumerable?, so reactions can be Wait. Look into Chaining them together to handle animation timings.
-        and accommodates Wait(seconds) In a chain like EzMsg.
+    //ToDo Maybe: Make reactionNodes an IEnumerable, so reactions can be .Waited()
     */
     public class ReactionRoot {
-        
         ReactionRoot(ReactionPacket inputPacket) { packet = inputPacket; }
 
         // List of Reactions. These are generated from the branching tree created through various events and their responses
@@ -100,7 +98,6 @@ namespace Com.PI.ReactionSystem {
     }
 
     /*
-    //ToDo: Make IEnumerator, so it's able to be .Waited()?
     Nodes in a tree, to hopefully preserve order of Reactions properly
     */
     public class ReactionNode {
@@ -140,12 +137,11 @@ namespace Com.PI.ReactionSystem {
         // executeAction modifies the packet
         private ReactionRoot root;
         private ReactionPacket packet;
-        private Action<ReactionPacket> executeAction;
 
-        public Reaction(ReactionRoot inputRoot,ReactionPacket inputPacket,Action<ReactionPacket> inputExecuteAction) {
+        public Reaction(ReactionRoot inputRoot,ReactionPacket inputPacket) {
             root = inputRoot;
             packet = inputPacket;
-            executeAction = inputExecuteAction;
+            inputPacket.Data.OnReact(inputPacket);
         }
 
         public void Execute() {
@@ -159,7 +155,7 @@ namespace Com.PI.ReactionSystem {
             }
         }
     }
-    
+
     // Used as a signal to terminate propagation and/or events or handlers from firing if necessary.
     // Some reactions will also need validation. I want to be able to PostNotification(ReactionValidationNotification) 
     //      and have Listeners be able to invalidate it, so I can have UI buttons for abilities. Able to click a button
