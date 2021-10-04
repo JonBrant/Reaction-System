@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Com.PI.NotificationSystem;
 
 
 //using Handler = System.Action<System.Object>;
@@ -41,15 +40,17 @@ Notification system needs to fire an event when it's done running all callbacks 
     add it to a List<string> so that multiple invalidation reasons can be given.
     For example you're trying to cast a spell, and you're out of mana AND it's not your turn.
  */
-namespace Com.PI.ReactionSystem {
+/*
+namespace ReactionSystemPrototype {
     //ToDo: Consider implementing PacketData as an Interface instead of using inheritance. Or maybe generics?
     public class PacketData {
-        public Action<PacketData> OnReact;
+        public Action<PacketData> OnValidate;
+        public Action<PacketData> OnExecute;
     }
 
-    /*
-    ToDo: I think ReactionPacket needs to create a ReactionRoot
-    */
+    
+    //ToDo: I think ReactionPacket needs to create a ReactionRoot
+    
     public class ReactionPacket : PacketData {
         public PacketData Data { get; }
         public Validator Validator { get; private set; }
@@ -62,16 +63,14 @@ namespace Com.PI.ReactionSystem {
         public bool IsInvalidated() { return Validator.IsInvalidated(); }
     }
 
-    /*
-    Root of the ReactionNode tree. Could and should probably just be a ReactionNode, 
-    but I wanted to stuff extra functionality in a class for now, may refactor later.
-    //ToDo Maybe: Make reactionNodes an IEnumerable, so reactions can be .Waited()
-    */
+    
+    // Root of the ReactionNode tree. Could and should probably just be a ReactionNode, 
+    // but I wanted to stuff extra functionality in a class for now, may refactor later.
+    // ToDo Maybe: Make reactionNodes an IEnumerable, so reactions can be .Waited()
+    
     public class ReactionRoot {
         ReactionRoot(ReactionPacket inputPacket) { packet = inputPacket; }
-
         // List of Reactions. These are generated from the branching tree created through various events and their responses
-        private IEnumerable reactionSequence;
         private readonly List<ReactionNode> reactionNodes;
         private ReactionPacket packet;
 
@@ -97,9 +96,9 @@ namespace Com.PI.ReactionSystem {
         }
     }
 
-    /*
-    Nodes in a tree, to hopefully preserve order of Reactions properly
-    */
+    
+    //Nodes in a tree, to hopefully preserve order of Reactions properly
+    
     public class ReactionNode {
         ReactionNode(ReactionRoot inputRoot,ReactionPacket inputPacket,List<ReactionNode> inputReactionNodes = null) {
             root = inputRoot;
@@ -129,9 +128,9 @@ namespace Com.PI.ReactionSystem {
         }
     }
 
-    /*
-    Handles the passing of the ReactionPacket to the NotificationSystem. 
-    */
+    
+    //Handles the passing of the ReactionPacket to the NotificationSystem. 
+    
     public class Reaction {
         // This is the actual reaction from the event.
         // executeAction modifies the packet
@@ -141,7 +140,7 @@ namespace Com.PI.ReactionSystem {
         public Reaction(ReactionRoot inputRoot,ReactionPacket inputPacket) {
             root = inputRoot;
             packet = inputPacket;
-            inputPacket.Data.OnReact(inputPacket);
+            inputPacket.Data.OnExecute(inputPacket);
         }
 
         public void Execute() {
@@ -162,10 +161,10 @@ namespace Com.PI.ReactionSystem {
     //      and the user input gets validated 
     // Anything can read it, or invalidate it, but nothing can revalidate it.
     public class Validator {
-        /* ToDo: Give Validator.Invalidate an optional string 'InvalidationReason' parameter,
-          add it to a List<string> so that multiple invalidation reasons can be given.
-          For example you're trying to cast a spell, and you're out of mana AND it's not your turn.
-        */
+        // ToDo: Give Validator.Invalidate an optional string 'InvalidationReason' parameter,
+         // add it to a List<string> so that multiple invalidation reasons can be given.
+         // For example you're trying to cast a spell, and you're out of mana AND it's not your turn.
+        
         private bool invalidated;
 
         public Validator() { invalidated = false; }
@@ -175,3 +174,4 @@ namespace Com.PI.ReactionSystem {
         public bool IsInvalidated() { return invalidated; }
     }
 }
+*/
