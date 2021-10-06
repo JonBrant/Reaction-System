@@ -5,7 +5,7 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
-Assets/CodeTodoList/
+Assets/ThirdParty/CodeTodoList/
 # Visual Studio cache directory
 .vs/
 
